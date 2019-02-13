@@ -13,6 +13,11 @@ namespace BillMicroService.DataAccess
 {
     public class BillItemDB
     {
+
+        protected BillItemDB()
+        {
+        }
+
         // !!!! Citanje reda
         private static BillItem ReadRow(SqlDataReader reader)
         {
@@ -52,7 +57,7 @@ namespace BillMicroService.DataAccess
         {
             try
             {
-                // !!!!
+
                 List<BillItem> retVal = new List<BillItem>();
 
                 using (SqlConnection connection = new SqlConnection(DBFunctions.ConnectionString))
@@ -79,7 +84,7 @@ namespace BillMicroService.DataAccess
                             if (b.ItemType == "Product")
                             {
                                 b.Product = GetProduct("product/Product", b.IdProduct);
-                               
+
 
                             }
                             else if (b.ItemType == "Service")
@@ -87,11 +92,7 @@ namespace BillMicroService.DataAccess
                                 b.Service = GetService("service/Service", b.IdService);
                                 b.Appointment = GetAppointment("calendar/Appointment", b.IdAppointment);
                             }
-                            else
-                            {
-                                // return null;
-                            }
-                            // !!!!
+
                         }
                     }
                 }
@@ -100,7 +101,7 @@ namespace BillMicroService.DataAccess
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("BillItem GetAll exc", ex);
             }
         }
 
@@ -111,7 +112,7 @@ namespace BillMicroService.DataAccess
         {
             try
             {
-                // !!!!
+
                 List<BillItem> retVal = new List<BillItem>();
 
                 using (SqlConnection connection = new SqlConnection(DBFunctions.ConnectionString))
@@ -135,7 +136,7 @@ namespace BillMicroService.DataAccess
                         while (reader.Read())
                         {
 
-                            // !!!!
+
                             BillItem b = ReadRow(reader);
                             retVal.Add(b);
 
@@ -148,11 +149,7 @@ namespace BillMicroService.DataAccess
                                 b.Service = GetService("service/Service", b.IdService);
                                 b.Appointment = GetAppointment("calendar/Appointment", b.IdAppointment);
                             }
-                            else
-                            {
-                                // return null;
-                            }
-                            // !!!!
+
                         }
                     }
                 }
@@ -161,7 +158,7 @@ namespace BillMicroService.DataAccess
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("BillItem GetAllById exc", ex);
             }
         }
 
@@ -198,15 +195,14 @@ namespace BillMicroService.DataAccess
                         {
                             retVal = ReadRow(reader);
 
-                            if (retVal.ItemType == "Product") {
+                            if (retVal.ItemType == "Product")
+                            {
                                 retVal.Product = GetProduct("product/Product", retVal.IdProduct);
-                            } else if (retVal.ItemType == "Service") {
+                            }
+                            else if (retVal.ItemType == "Service")
+                            {
                                 retVal.Service = GetService("service/Service", retVal.IdService);
                             }
-                            else{
-                               // return null;
-                            }
-                            
 
                         }
                     }
@@ -215,7 +211,7 @@ namespace BillMicroService.DataAccess
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("BillItem GetById exc", ex);
             }
         }
 
@@ -231,7 +227,7 @@ namespace BillMicroService.DataAccess
                     SqlCommand command = connection.CreateCommand();
                     command.CommandText = SqlHelper.Instance().InsertStr(table, filds);
 
-                    // !!!!
+
                     command.AddParameter("@BillItemNumber", SqlDbType.NVarChar, newItem.BillItemNumber);
                     command.AddParameter("@Amount", SqlDbType.Int, newItem.Amount);
                     command.AddParameter("@Discount", SqlDbType.Int, newItem.Discount);
@@ -241,8 +237,8 @@ namespace BillMicroService.DataAccess
                     command.AddParameter("@IdProduct", SqlDbType.Int, SqlHelper.Instance().NullCheck(newItem.IdProduct));
                     command.AddParameter("@IdAppointment", SqlDbType.Int, SqlHelper.Instance().NullCheck(newItem.IdAppointment));
 
-                    decimal price = newItem.Amount * (100 - newItem.Discount) / 100;
-                    
+                    decimal price = (decimal)newItem.Amount * (100 - newItem.Discount) / 100;
+
 
                     if (newItem.ItemType == "Product")
                     {
@@ -252,14 +248,7 @@ namespace BillMicroService.DataAccess
                     {
                         price = price * GetService("service/Service", newItem.IdService).Price;
                     }
-                    else
-                    {
-                        // return null;
-                    }
-                   
 
-
-                    // !!!!
 
                     connection.Open();
 
@@ -272,7 +261,7 @@ namespace BillMicroService.DataAccess
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("BillItem Add exc", ex);
             }
         }
 
@@ -295,7 +284,6 @@ namespace BillMicroService.DataAccess
                     command.AddParameter("@IdService", SqlDbType.Int, SqlHelper.Instance().NullCheck(newItem.IdService));
                     command.AddParameter("@IdProduct", SqlDbType.Int, SqlHelper.Instance().NullCheck(newItem.IdProduct));
                     command.AddParameter("@IdAppointment", SqlDbType.Int, SqlHelper.Instance().NullCheck(newItem.IdAppointment));
-                    // !!!!
 
                     connection.Open();
 
@@ -304,7 +292,7 @@ namespace BillMicroService.DataAccess
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("BillItem Update exc", ex);
             }
         }
 

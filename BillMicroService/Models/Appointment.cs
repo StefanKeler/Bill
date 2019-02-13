@@ -18,8 +18,7 @@ namespace BillMicroService.Models
 
         [Required]
         public int IdCalendar { get; set; }
-        //public Calendar Calendar { get; set; }
-
+       
 
         public int Reserved { get; set; }
     }

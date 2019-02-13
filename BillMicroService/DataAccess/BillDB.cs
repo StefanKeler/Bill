@@ -13,6 +13,10 @@ namespace BillMicroService.DataAccess
 {
     public class BillDB
     {
+        protected BillDB()
+        {
+        }
+
         // !!!! Citanje reda
         private static Bill ReadRow(SqlDataReader reader)
         {
@@ -34,7 +38,7 @@ namespace BillMicroService.DataAccess
         private static string table = "[shopcart].[Bill]";
 
         // !!!! polja tabele              
-        private static string[] filds = { "Id", "Date", "BillNumber", "TotalPrice", "BuyerId", "Valute", "isIssued"};
+        private static string[] filds = { "Id", "Date", "BillNumber", "TotalPrice", "BuyerId", "Valute", "isIssued" };
 
         // Baza string
         private static string AllColumnSelect
@@ -70,11 +74,11 @@ namespace BillMicroService.DataAccess
                         while (reader.Read())
                         {
 
-                            // !!!!
                             Bill b = ReadRow(reader);
                             retVal.Add(b);
                             b.BillItems = BillItemDB.GetAllByBillId((int)b.Id);
-                            foreach (BillItem i in b.BillItems) {
+                            foreach (BillItem i in b.BillItems)
+                            {
                                 if (i.ItemType == "Product")
                                 {
                                     i.Product = BillItemDB.GetProduct("product/Product", i.IdProduct);
@@ -84,13 +88,9 @@ namespace BillMicroService.DataAccess
                                     i.Service = BillItemDB.GetService("service/Service", i.IdService);
                                     i.Appointment = BillItemDB.GetAppointment("calendar/Appointment", i.IdAppointment);
                                 }
-                                else
-                                {
-                                    // return null;
-                                }
+
                             }
-                            //p.Address = GetObj("address/Address", p.IdAddress);
-                            // !!!!
+
                         }
                     }
                 }
@@ -99,7 +99,7 @@ namespace BillMicroService.DataAccess
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Bill GetAll exc", ex);
             }
         }
 
@@ -135,8 +135,7 @@ namespace BillMicroService.DataAccess
                         {
                             retVal = ReadRow(reader);
                             retVal.BillItems = BillItemDB.GetAllByBillId((int)retVal.Id);
-                            //retVal.Category = BillCategoryDB.GetById(retVal.IdCategory);
-                            //retVal.Address = GetObj("address/Address", retVal.IdAddress);
+
                             foreach (BillItem i in retVal.BillItems)
                             {
                                 if (i.ItemType == "Product")
@@ -148,10 +147,7 @@ namespace BillMicroService.DataAccess
                                     i.Service = BillItemDB.GetService("service/Service", i.IdService);
                                     i.Appointment = BillItemDB.GetAppointment("calendar/Appointment", i.IdAppointment);
                                 }
-                                else
-                                {
-                                    // return null;
-                                }
+
                             }
 
                         }
@@ -161,7 +157,7 @@ namespace BillMicroService.DataAccess
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Bill GetById exc", ex);
             }
         }
 
@@ -177,7 +173,6 @@ namespace BillMicroService.DataAccess
                     SqlCommand command = connection.CreateCommand();
                     command.CommandText = SqlHelper.Instance().InsertStr(table, filds);
 
-                    // !!!!
                     command.AddParameter("@Date", SqlDbType.Date, newItem.Date);
                     command.AddParameter("@BillNumber", SqlDbType.NVarChar, newItem.BillNumber);
                     command.AddParameter("@TotalPrice", SqlDbType.Money, newItem.TotalPrice);
@@ -185,8 +180,6 @@ namespace BillMicroService.DataAccess
                     command.AddParameter("@Valute", SqlDbType.NVarChar, newItem.Valute);
                     command.AddParameter("@isIssued", SqlDbType.Int, newItem.isIssued);
 
-                    
-                    // !!!!
 
                     connection.Open();
 
@@ -195,7 +188,7 @@ namespace BillMicroService.DataAccess
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Bill Add exc", ex);
             }
         }
 
@@ -217,7 +210,7 @@ namespace BillMicroService.DataAccess
                     command.AddParameter("@BuyerId", SqlDbType.Int, SqlHelper.Instance().NullCheck(newItem.BuyerId));
                     command.AddParameter("@Valute", SqlDbType.NVarChar, newItem.Valute);
                     command.AddParameter("@isIssued", SqlDbType.Int, newItem.isIssued);
-                    // !!!!
+
 
                     connection.Open();
 
@@ -226,46 +219,16 @@ namespace BillMicroService.DataAccess
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Bill Update exc", ex);
             }
+
         }
-
-        /*// update
-        public static void UpdatePrice(decimal price, )
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(DBFunctions.ConnectionString))
-                {
-                    SqlCommand command = connection.CreateCommand();
-                    command.CommandText = SqlHelper.Instance().UpdateStr(table, filds);
-
-                    command.AddParameter("@Id", SqlDbType.Int, newItem.Id);
-                    command.AddParameter("@Date", SqlDbType.Date, newItem.Date);
-                    command.AddParameter("@BillNumber", SqlDbType.NVarChar, newItem.BillNumber);
-                    command.AddParameter("@TotalPrice", SqlDbType.Money, newItem.TotalPrice);
-                    command.AddParameter("@BuyerId", SqlDbType.Int, SqlHelper.Instance().NullCheck(newItem.BuyerId));
-                    command.AddParameter("@Valute", SqlDbType.NVarChar, newItem.Valute);
-                    command.AddParameter("@isIssued", SqlDbType.Int, newItem.isIssued);
-                    // !!!!
-
-                    connection.Open();
-
-                    command.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }*/
-
         // delete
         public static void Delete(int id)
         {
             SqlHelper.Instance().Delete(id, table, filds);
         }
 
-       
+
     }
 }

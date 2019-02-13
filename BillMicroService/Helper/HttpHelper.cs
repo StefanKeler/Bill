@@ -32,8 +32,10 @@ namespace BillMicroService.Helper
         public string GetById(string uri, int port, int id)
         {
 
-            string url = "http://localhost:";
-            url = url + port + "/" + uri + "/" + id;
+
+
+
+            string url = String.Format("http://localhost:{0}/{1}/{2}", port, uri, id);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             var getResponse = (HttpWebResponse)request.GetResponse();
@@ -48,8 +50,7 @@ namespace BillMicroService.Helper
         public string GetAll(string uri, int port)
         {
 
-            string url = "http://localhost:";
-            url = url + port + "/" + uri;
+            string url = String.Format("http://localhost:{0}/{1}", port, uri);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             var getResponse = (HttpWebResponse)request.GetResponse();

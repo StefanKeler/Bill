@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 
@@ -13,7 +14,8 @@ namespace BillMicroService.Helper
     {
         static SqlHelper instance = null;
 
-        private SqlHelper(){
+        private SqlHelper()
+        {
 
         }
 
@@ -24,89 +26,97 @@ namespace BillMicroService.Helper
                 instance = new SqlHelper();
             }
             return instance;
-         
+
         }
-        
+
 
         public string formatAllColumnSelect(string table, string[] filds)
         {
-
-            string r = @"";
-
+            StringBuilder bld = new StringBuilder();
+            bld.Append(@"");
             for (int i = 0; i < filds.Length; i++)
             {
                 if (i != filds.Length - 1)
                 {
-                    r += table + "." + "[" + filds[i] + "], \n";
+                    bld.Append(table + "." + "[" + filds[i] + "], \n");
+
                 }
                 else
                 {
-                    r += table + "." + "[" + filds[i] + "]";
+                    bld.Append(table + "." + "[" + filds[i] + "]");
+
                 }
             }
-            return r;
+            return bld.ToString();
         }
 
         public string InsertStr(string table, string[] filds)
         {
-            string ins = @"insert into " + table + " (";
+
+            StringBuilder bld = new StringBuilder();
+            bld.Append(@"insert into " + table + " (");
 
             for (int i = 1; i < filds.Length; i++)
             {
                 if (i != filds.Length - 1)
                 {
-                    ins += filds[i] + ", ";
+                    bld.Append(filds[i] + ", ");
                 }
                 else
                 {
-                    ins += filds[i];
+                    bld.Append(filds[i]);
                 }
             }
 
-            ins += ") values (";
+            bld.Append(") values (");
 
             for (int i = 1; i < filds.Length; i++)
             {
                 if (i != filds.Length - 1)
                 {
-                    ins += "@" + filds[i] + ", ";
+                    bld.Append("@" + filds[i] + ", ");
+
                 }
                 else
                 {
-                    ins += "@" + filds[i];
+                    bld.Append("@" + filds[i]);
+
                 }
             }
+            bld.Append(");");
 
-            ins += ");";
-
-            return ins;
+            return bld.ToString();
         }
 
 
         public string UpdateStr(string table, string[] filds)
         {
+            StringBuilder bld = new StringBuilder();
+            bld.Append(@"update " + table + " set ");
 
-            string ins = @"update " + table + " set ";
 
             for (int i = 1; i < filds.Length; i++)
             {
                 if (i != filds.Length - 1)
                 {
-                    ins += filds[i] + "=@" + filds[i] + ", ";
+                    bld.Append(filds[i] + "=@" + filds[i] + ", ");
+
                 }
                 else
                 {
-                    ins += filds[i] + "=@" + filds[i];
+                    bld.Append(filds[i] + "=@" + filds[i]);
+
                 }
             }
 
-            ins += " where Id=@Id";
+            bld.Append(" where Id=@Id");
 
 
-            return ins;
+            return bld.ToString();
         }
 
-        public void Delete(int id, string table, string[] filds) {
+        public void Delete(int id, string table, string[] filds)
+        {
             try
             {
                 using (SqlConnection connection = new SqlConnection(DBFunctions.ConnectionString))
@@ -123,7 +133,7 @@ namespace BillMicroService.Helper
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("Delete exc", ex);
             }
         }
 
@@ -156,14 +166,14 @@ namespace BillMicroService.Helper
 
         public int DBCheckIntNull(SqlDataReader reader, string atribute)
         {
-            int result = 0;
+
             if (reader[atribute].Equals(DBNull.Value))
             {
-                return result;
+                return 0;
             }
             else
             {
-                return result = Convert.ToInt32(reader[atribute]);
+                return Convert.ToInt32(reader[atribute]);
             }
 
         }

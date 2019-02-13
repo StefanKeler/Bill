@@ -20,7 +20,7 @@ namespace BillMicroService.Controllers
         [Route("shopcart/Bill/{id}"), HttpGet]
         public Bill GetBillById(int id)
         {
-            return BillDB.GetById(id);
+            return BillDB.GetById(id);//s
         }
 
 
